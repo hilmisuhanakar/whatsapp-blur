@@ -1,6 +1,5 @@
 window.onload = function () {
   let checkChatListInterval = setInterval(() => {
-    console.log("asdasd");
     const chatList = document.querySelector('[role="grid"]');
 
     if (chatList) {
