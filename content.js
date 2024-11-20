@@ -1,6 +1,5 @@
 window.onload = function () {
   let chatListBlur = true;
-  let messageAreaBlur = true;
 
   setInterval(() => {
     if (chatListBlur) {
@@ -9,14 +8,6 @@ window.onload = function () {
       if (chatList) {
         changeBlur(chatList);
         chatListBlur = false;
-      }
-    }
-
-    if (messageAreaBlur) {
-      const messageArea = document.getElementById("main");
-      if (messageArea) {
-        changeBlur(messageArea);
-        messageAreaBlur = false;
       }
     }
   }, 0);
