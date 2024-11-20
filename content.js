@@ -1,16 +1,13 @@
 window.onload = function () {
-  let chatListBlur = true;
+  let checkChatListInterval = setInterval(() => {
+    console.log("asdasd");
+    const chatList = document.querySelector('[role="grid"]');
 
-  setInterval(() => {
-    if (chatListBlur) {
-      const chatList = document.querySelector('[role="grid"]');
-
-      if (chatList) {
-        changeBlur(chatList);
-        chatListBlur = false;
-      }
+    if (chatList) {
+      clearInterval(checkChatListInterval);
+      changeBlur(chatList);
     }
-  }, 0);
+  }, 1000);
 };
 
 function changeBlur(selector) {
