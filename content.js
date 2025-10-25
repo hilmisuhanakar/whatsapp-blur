@@ -4,28 +4,45 @@ window.onload = function () {
 
     if (!sideDiv) return;
 
-    observeSideDivChanges(sideDiv);
+    // Find chat list items - these are gridcells that are direct children of rows
+    const chatItems = getChatItems();
 
-    const listItems = document.querySelectorAll('[role="listitem"]');
-
-    if (listItems.length > 0) {
+    if (chatItems.length > 0) {
       clearInterval(checkChatListInterval);
-      addBlurEffectToListItems(listItems);
-      observeNewListItems();
+      addBlurEffectToListItems(chatItems);
+      observeSideDivChanges(sideDiv);
     }
   }, 1000);
 };
 
+function getChatItems() {
+  // Get all gridcells that are direct children of rows (these are the main chat items)
+  const rows = document.querySelectorAll('[role="row"]');
+  const chatItems = [];
+  
+  rows.forEach((row) => {
+    const gridCell = row.querySelector('[role="gridcell"][tabindex="0"]');
+    if (gridCell) {
+      chatItems.push(gridCell);
+    }
+  });
+  
+  return chatItems;
+}
+
 function addBlurEffectToListItems(listItems) {
   listItems.forEach((item) => {
+    // Apply blur effect if not already blurred
     if (!item.dataset.blurred) {
       item.style.filter = "blur(5px)";
       item.dataset.blurred = "true";
     }
 
+    // Add event listeners if not already added
     if (!item.dataset.eventsAdded) {
       item.addEventListener("mouseenter", function () {
-        listItems.forEach((otherItem) => {
+        const allChatItems = getChatItems();
+        allChatItems.forEach((otherItem) => {
           if (otherItem !== item) {
             otherItem.style.filter = "blur(5px)";
           }
@@ -34,7 +51,8 @@ function addBlurEffectToListItems(listItems) {
       });
 
       item.addEventListener("mouseleave", function () {
-        listItems.forEach((otherItem) => {
+        const allChatItems = getChatItems();
+        allChatItems.forEach((otherItem) => {
           otherItem.style.filter = "blur(5px)";
         });
       });
@@ -46,37 +64,13 @@ function addBlurEffectToListItems(listItems) {
 
 function observeSideDivChanges(sideDiv) {
   const observer = new MutationObserver(() => {
-    const listItems = document.querySelectorAll('[role="listitem"]');
-    if (listItems.length > 0) {
-      addBlurEffectToListItems(listItems);
+    const chatItems = getChatItems();
+    if (chatItems.length > 0) {
+      addBlurEffectToListItems(chatItems);
     }
   });
 
   observer.observe(sideDiv, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-function observeNewListItems() {
-  const chatList = document.querySelector('[role="grid"]');
-
-  if (!chatList) return;
-
-  const observer = new MutationObserver((mutationsList) => {
-    mutationsList.forEach((mutation) => {
-      if (mutation.type === "childList") {
-        const newItems = mutation.addedNodes;
-        newItems.forEach((node) => {
-          if (node.nodeType === 1 && node.getAttribute("role") === "listitem") {
-            addBlurEffectToListItems([node]);
-          }
-        });
-      }
-    });
-  });
-
-  observer.observe(chatList, {
     childList: true,
     subtree: true,
   });
